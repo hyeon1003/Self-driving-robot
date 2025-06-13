@@ -1,5 +1,3 @@
-// src/wsl.cpp
-
 #include "line_tracer_wsl/wsl.hpp"
 #include <algorithm>
 #include <cmath>
