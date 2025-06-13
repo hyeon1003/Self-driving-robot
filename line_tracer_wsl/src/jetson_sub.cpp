@@ -5,41 +5,6 @@ using std::placeholders::_1;
 
 class DxlCtrl : public rclcpp::Node {
 public:
-  DxlCtrl(): Node("dxl_ctrl"), dxl_() {
-    if (!dxl_.open()) { RCLCPP_ERROR(get_logger(),"DXL open failed"); rclcpp::shutdown(); }
-    sub_ = create_subscription<std_msgs::msg::Int32>(
-      "error", 10, std::bind(&DxlCtrl::on_error, this, _1));
-  }
-  ~DxlCtrl() { dxl_.close(); }
-
-private:
-  void on_error(const std_msgs::msg::Int32::SharedPtr msg) {
-    int err = msg->data;
-    int lm = 100 - int(0.61*err); //0.61
-    int rm = -100 + int(0.61*err);
-    dxl_.setVelocity(lm, rm);
-    RCLCPP_INFO(get_logger(), "err=%d lm=%d rm=%d", err, lm, rm);
-  }
-  rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr sub_;
-  Dxl dxl_;
-};
-
-int main(int argc, char** argv) {
-  rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<DxlCtrl>());
-  rclcpp::shutdown();
-  return 0;
-}
-
-
-src/sub.cpp
-#include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/int32.hpp"
-#include "line_tracer_jetson/dxl.hpp"
-using std::placeholders::_1;
-
-class DxlCtrl : public rclcpp::Node {
-public:
   DxlCtrl()
   : Node("dxl_ctrl"), dxl_()
   {
